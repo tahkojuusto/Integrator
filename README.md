@@ -1,36 +1,9 @@
-# integrator
+# Integrators
 
-FIXME: description
-
-## Installation
-
-Download from http://example.com/FIXME.
-
-## Usage
-
-FIXME: explanation
-
-    $ java -jar integrator-0.1.0-standalone.jar [args]
-
-## Options
-
-FIXME: listing of options this app accepts.
-
-## Examples
-
-...
-
-### Bugs
-
-...
-
-### Any Other Sections
-### That You Think
-### Might be Useful
-
-## License
-
-Copyright © 2017 FIXME
-
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
+This app calculates the integration of $f(x)$ from $x_0$ to $x_1$ numerically using three methods:
+- The midpoint rule
+$$ \frac{df}{dx} = P_0\left(\frac{x_0 + x_1}{2}\right) = f\left(\frac{x_0 + x_1}{2}\right)$$
+- The trapezoidal rule
+$$ \frac{df}{dx} = P_1\left(\frac{x_0 + x_1}{2}\right) = \frac{f(x_0) + f(x_1)}{2}$$
+- Simpson's rule
+$$ \frac{df}{dx} = P_2\left(\frac{x_0 + x_1}{2}\right) = \frac{f(x_0) + 4f\left(\frac{x_0 + x_1}{2}\right) + f(x_1)}{6}$$
