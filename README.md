@@ -1,9 +1,20 @@
-# Integrators
+<!doctype html><html><head><meta charset='utf-8'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.4.1/github-markdown.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.8.3/katex.min.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/texmath.css">
+<link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/vscode-texmath.css">
 
-This app calculates the integration of $f(x)$ from $x_0$ to $x_1$ numerically using three methods:
-- The midpoint rule
-$$ \frac{df}{dx} = P_0\left(\frac{x_0 + x_1}{2}\right) = f\left(\frac{x_0 + x_1}{2}\right)$$
-- The trapezoidal rule
-$$ \frac{df}{dx} = P_1\left(\frac{x_0 + x_1}{2}\right) = \frac{f(x_0) + f(x_1)}{2}$$
-- Simpson's rule
-$$ \frac{df}{dx} = P_2\left(\frac{x_0 + x_1}{2}\right) = \frac{f(x_0) + 4f\left(\frac{x_0 + x_1}{2}\right) + f(x_1)}{6}$$
+</head><body class="markdown-body">
+<h1 data-line="0" class="code-line" id="integrators">Integrators</h1>
+<p data-line="2" class="code-line">This app calculates the integration of <eq><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>f</mi><mo>(</mo><mi>x</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">f(x)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base"><span class="mord mathit" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathit">x</span><span class="mclose">)</span></span></span></span></eq> from <eq><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>x</mi><mn>0</mn></msub></mrow><annotation encoding="application/x-tex">x\_0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="base"><span class="mord"><span class="mord mathit">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathrm mtight">0</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"></span></span></span></span></span></span></span></span></eq> to <eq><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>x</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">x\_1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="base"><span class="mord"><span class="mord mathit">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.30110799999999993em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathrm mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"></span></span></span></span></span></span></span></span></eq> numerically using three methods:</p>
+<ul>
+<li data-line="3" class="code-line">The midpoint rule
+<eq>$ \frac{df}{dx} = P_0\left(\frac{x_0 + x_1}{2}\right) = f\left(\frac{x_0 + x_1}{2}\right): KaTeX parse error: $ within math mode</eq>$</li>
+<li data-line="5" class="code-line">The trapezoidal rule
+<eq>$ \frac{df}{dx} = P_1\left(\frac{x_0 + x_1}{2}\right) = \frac{f(x_0) + f(x_1)}{2}: KaTeX parse error: $ within math mode</eq>$</li>
+<li data-line="7" class="code-line">Simpson's rule
+<eq>$ \frac{df}{dx} = P_2\left(\frac{x_0 + x_1}{2}\right) = \frac{f(x_0) + 4f\left(\frac{x_0 + x_1}{2}\right) + f(x_1)}{6}: KaTeX parse error: $ within math mode</eq>$</li>
+</ul>
+
+</body></html>
