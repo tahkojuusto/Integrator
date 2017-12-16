@@ -4,8 +4,9 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.8.0"]
-                 [org.clojure/tools.nrepl "0.2.10"]]
-  :plugins [[cider/cider-nrepl "0.14.0"]]
+                 [org.clojure/tools.nrepl "0.2.10"]
+                 [proto-repl "0.3.1"]
+                 [org.clojure/data.json "0.2.6"]]
   :main ^:skip-aot integrator.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})
