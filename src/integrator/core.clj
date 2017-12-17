@@ -22,7 +22,7 @@
     From results, create a JSON report."
     [& args]
     (if (not (= (count args) 3))
-        (println "Usage: (-main x0 x1 N)")
+        (println "Usage: lein run <x0> <x1> <N>")
             (let [f         (util/parse-fn "") ; TODO: make this input.
                   [x0 x1 N] (util/parse-args args)]
                 (println (-run f x0 x1 N)))))
