@@ -5,8 +5,10 @@ This app calculates the integration numerically using three methods:
 - The trapezoidal rule
 - Simpson's rule
 
+Usage: ``lein run <x0> <x1> <N>``, example shown below.
+
 ```sh
-$ lein run <x0> <x1> <N>
+$ lein run 0 1 100
 ```
 
 ```json
