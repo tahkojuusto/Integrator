@@ -1,33 +1,28 @@
 (ns integrator.core
-  (require [integrator.process :as proc])
-  (require [integrator.report :as report]))
-
-
-(defn -create-method-struct
-  [method-name result]
-  {:method-name method-name
-   :result result})
-
-(defn -create-conf-struct
-  [x0 x1 N]
-  {:x0 x0, :x1 x1, :sample-size N})
+    (require [integrator.integrate :as integrate])
+    (require [integrator.report :as report])
+    (require [integrator.util :as util]))
 
 (defn -run
+    "Calculate the integration for each method, and create corresponding reports."
     [f x0 x1 N]
 
     ; Run separately using different methods.
-    (let [trapezoid-report (-create-method-struct "trapezoid" (proc/integrate f x0 x1 "trapezoid" N))
-          midpoint-report (-create-method-struct "midpoint" (proc/integrate f x0 x1 "midpoint" N))
-          simpson-report (-create-method-struct "simpson" (proc/integrate f x0 x1 "simpson" N))]
-        (report/create-report [trapezoid-report midpoint-report simpson-report] (-create-conf-struct x0 x1 N))))
+    (let [trapezoid-result  (integrate/integrate f x0 x1 "trapezoid" N)
+          midpoint-result   (integrate/integrate f x0 x1 "midpoint" N)
+          simpson-result    (integrate/integrate f x0 x1 "simpson" N)
+          trapezoid-report  (report/create-JSON-method-struct "trapezoid" trapezoid-result)
+          midpoint-report   (report/create-JSON-method-struct "midpoint" midpoint-result)
+          simpson-report    (report/create-JSON-method-struct "simpson" simpson-result)
+          config            (report/create-JSON-config-struct x0 x1 N)]
+        (report/create-report [trapezoid-report midpoint-report simpson-report] config)))
 
 (defn -main
-    "Integrate f(x) from x0 to x1 with N steps. Use multiple numerical methods."
+    "Integrate f(x) from x0 to x1 with N steps. Use multiple numerical methods.
+    From results, create a JSON report."
     [& args]
-    (if (not (= (count args) 4))
-        (println "Usage: (-main (fn [x] ( ... )) x0 x1 N)")
-        (let [f (nth args 0)
-              x0 (nth args 1)
-              x1 (nth args 2)
-              N (nth args 3)]
-          (println (-run (fn [x] (* x x)) x0 x1 N)))))
+    (if (not (= (count args) 3))
+        (println "Usage: (-main x0 x1 N)")
+            (let [f         (util/parse-fn "") ; TODO: make this input.
+                  [x0 x1 N] (util/parse-args args)]
+                (println (-run f x0 x1 N)))))

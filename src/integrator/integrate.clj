@@ -1,4 +1,4 @@
-(ns integrator.process)
+(ns integrator.integrate)
 
 
 (defn -step-midpoint
@@ -34,10 +34,10 @@
     "Simpson rule (2nd order polynomial)."
     [f state]
     (let [{:keys [x0 x1 x dx sum i]} state
-          coef  (-integrate-simpson-coefficient i)
+          c     (-integrate-simpson-coefficient i)
           f0    (f x0)
           f1    (f x1)
-          fm    (* coef (f x))]
+          fm    (* c (f x))]
 
         ; Form 2nd order polynomial between (x0, f0) - (x1, f1),
         ; and take its value at the midpoint.
