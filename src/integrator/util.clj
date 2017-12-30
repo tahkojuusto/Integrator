@@ -1,5 +1,8 @@
-(ns integrator.util)
+(ns integrator.util
+    (:require [clojure.tools.logging :as log]))
 
+; https://stackoverflow.com/questions/11676120/why-dont-when-let-and-if-let-support-multiple-bindings-by-default
+; Ertuğrul Çetin
 (defmacro if-let*
     "Multiple binding version of if-let
     TODO: Refactor this."
@@ -16,4 +19,5 @@
     "Given a set of vectors, return the first satisfying the string input.
     More generally, return the first item, which is not null."
     [rules]
+    (log/trace "ENTERING util/find-first-grammar-rule.")
     (first (filter #((comp not nil?) %) rules)))

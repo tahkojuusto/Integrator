@@ -1,4 +1,5 @@
-(ns integrator.parser.lex)
+(ns integrator.parser.lex
+    (:require [clojure.tools.logging :as log]))
 
 (def add-operators     #{\+ \-})
 (def mult-operators    #{\* \/})
@@ -23,7 +24,10 @@
 (defn is-variable? [c]      (= variable c))
 (defn is-number? [c]        (Character/isDigit c))
 
-(defn -scan [input-str peek tokens]
+(defn -scan
+    "Given function as string and in infix expression, create tokens from it."
+    [input-str peek tokens]
+    (log/trace "ENTERING lex/-scan.")
     (let [c    (first input-str) ; first char in the input string.
           peek (str peek c)] ; buffered first chars comprising a part of token value.
         (cond
@@ -56,5 +60,8 @@
               ; No valid symbol, stop the lexer.
               :else (throw (Exception. (str "Unknown token: " peek))))))
 
-(defn scan [input-str]
+(defn scan
+    "Given function as string and in infix expression, create tokens from it."
+    [input-str]
+    (log/trace "ENTERING lex/scan.")
     (-scan input-str "" []))

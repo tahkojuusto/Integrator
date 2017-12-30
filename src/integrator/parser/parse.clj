@@ -1,5 +1,6 @@
 (ns integrator.parser.parse
     (:require [integrator.parser.lex :as lex])
+    (:require [clojure.tools.logging :as log])
     (:use [integrator.util :only (find-first-grammar-rule if-let*)]))
 
 ; Parser that handles infix math expressions.
@@ -30,6 +31,7 @@
     Returns the rest of tokens if there is a match.
     Otherwise, returns false."
     [tokens type]
+    (log/trace "ENTERING parse/-match.")
     (if (= (:type (first tokens)) type)
         (rest tokens)
         false))
@@ -38,6 +40,7 @@
     "Apply one of the grammar rules concerning parenthesis and non-terminals:
     fact --> (start) | INTEGER."
     [tokens]
+    (log/trace "ENTERING parse/-fact.")
     (find-first-grammar-rule [
                               ; fact --> INTEGER
                               (if-let* [integer-tokens (or (-match tokens "val") (-match tokens "var"))]
@@ -53,6 +56,7 @@
     "Apply one of the grammar rules concerning operators * and /:
     expr --> fact * expr | fact / expr | fact."
     [tokens]
+    (log/trace "ENTERING parse/-expr.")
     (find-first-grammar-rule [
                               ; expr --> fact {*,/} expr
                               (if-let* [[fact1-tokens fact1-ast] (-fact tokens)
@@ -70,6 +74,7 @@
     "Apply one of the grammar rules concerning operators + and -:
     start --> expr + start | expr - start | expr."
     [tokens]
+    (log/trace "ENTERING parse/-start.")
     (find-first-grammar-rule [
                               ; start --> expr {+,-} start
                               (if-let* [[expr1-tokens expr1-ast] (-expr tokens)
@@ -86,6 +91,7 @@
 (defn -combine-tree
     "Go through the tree, and form textual Clojure function."
     [ast]
+    (log/trace "ENTERING parse/-combine-tree.")
     (cond
           ; Leaf reached. Constant values are evaluated as they are.
           ; Variables are converted to symbols, e.g. "+" --> +.
@@ -101,6 +107,7 @@
 (defn parse
     "Given tokens from lexical analysis, return the abstract syntax tree (AST)."
     [tokens]
+    (log/trace "ENTERING parse/parse.")
     (let [result (-start tokens)]
         (if result
             (if (empty? (first result))
@@ -114,4 +121,5 @@
 (defn create-fn
     "Given the AST, form Clojure function."
     [ast]
+    (log/trace "ENTERING parse/-create-fn.")
     (eval (list 'fn '[x] (-combine-tree ast))))

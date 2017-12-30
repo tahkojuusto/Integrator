@@ -1,8 +1,10 @@
-(ns integrator.integrate)
+(ns integrator.integrate
+    (:require [clojure.tools.logging :as log]))
 
 (defn -step-midpoint
     "Midpoint rule (0th order polynomial)."
     [f state]
+    (log/trace "ENTERING integrate/-step-midpoint.")
     (let [{:keys [x0 x1 x dx sum i]} state
           fm (f (+ x (/ dx 2)))]
 
@@ -12,6 +14,7 @@
 (defn -step-trapezoid
     "Trapezoid rule (1th order polynomial)."
     [f state]
+    (log/trace "ENTERING integrate/-step-trapezoid.")
     (let [{:keys [x0 x1 x dx sum i]} state
           f0 (f x)
           f1 (f (+ x dx))]
@@ -23,12 +26,14 @@
 (defn -integrate-simpson-coefficient
     "Determine coefficient of a middle term in Simpson rule (2 or 4)."
     [i]
+    (log/trace "ENTERING integrate/-integrate-simpson-coefficient.")
     (let [even? (= (mod i 2) 0)]
         (if even? 2 4)))
 
 (defn -step-simpson
     "Simpson rule (2nd order polynomial)."
     [f state]
+    (log/trace "ENTERING integrate/-step-simpson.")
     (let [{:keys [x0 x1 x dx sum i]} state
           c     (-integrate-simpson-coefficient i)
           f0    (f x0)
@@ -44,6 +49,7 @@
 (defn -integrate-generic
     "Sum steps calculated using specific method until x >= x1."
     [f step state]
+    (log/trace "ENTERING integrate/-integrate-generic.")
     (let [{:keys [x0 x1 x dx sum i]} state]
         (if (>= x x1)
             sum
@@ -58,6 +64,7 @@
     "Create state map, which has start point x0, end point x1, step size dx, current position x,
      current area sum, and current index i."
     [x0 x1 dx]
+    (log/trace "ENTERING integrate/-init-state.")
     {:x0 x0, :x1 x1, :dx dx, :x x0, :sum 0, :i 0})
 
 (def -method-conversion
@@ -68,6 +75,7 @@
 (defn integrate
     "Integrate f(x) from x0 to x1. Use the given method with N samples."
     [f x0 x1 method-str N]
+    (log/trace "ENTERING integrate/integrate.")
     (let [dx (/ (- x1 x0) N)
           ; Get the initial state map.
           state (-init-state x0 x1 dx)
