@@ -1,6 +1,6 @@
 (ns integrator.parser.parse
     (:require [integrator.parser.lex :as lex])
-    (:use [integrator.util :only (find-first-rule if-let*)]))
+    (:use [integrator.util :only (find-first-grammar-rule if-let*)]))
 
 ; Parser that handles infix math expressions.
 ;
@@ -24,7 +24,7 @@
 (defrecord TreeNode [value left-node right-node])
 
 (defn -match
-    "Takes the first token, verifies it is a non-terminal
+    "Take the first token, verify it is a non-terminal
     and matches the expected token type.
 
     Returns the rest of tokens if there is a match.
@@ -35,56 +35,71 @@
         false))
 
 (defn -fact
-    "Applies one of the grammar rules concerning parenthesis and non-terminals:
+    "Apply one of the grammar rules concerning parenthesis and non-terminals:
     fact --> (start) | INTEGER."
     [tokens]
-    (find-first-rule [
-                      ; fact --> INTEGER
-                      (if-let* [integer-tokens (-match tokens "val")]
-                                [integer-tokens (TreeNode. (first tokens) nil nil)])
+    (find-first-grammar-rule [
+                              ; fact --> INTEGER
+                              (if-let* [integer-tokens (or (-match tokens "val") (-match tokens "var"))]
+                                       [integer-tokens (TreeNode. (first tokens) nil nil)])
 
-                      ; fact --> (start)
-                      (if-let* [left-par-tokens (-match tokens "l-par")
-                                 [start-tokens start-ast] (-start left-par-tokens)
-                                 right-par-tokens (-match start-tokens "r-par")]
-                                [right-par-tokens start-ast])]))
+                              ; fact --> (start)
+                              (if-let* [left-par-tokens (-match tokens "l-par")
+                                        [start-tokens start-ast] (-start left-par-tokens)
+                                        right-par-tokens (-match start-tokens "r-par")]
+                                       [right-par-tokens start-ast])]))
 
 (defn -expr
-    "Applies one of the grammar rules concerning operators * and /:
+    "Apply one of the grammar rules concerning operators * and /:
     expr --> fact * expr | fact / expr | fact."
     [tokens]
-    (find-first-rule [
-                      ; expr --> fact {*,/} expr
-                      (if-let* [[fact1-tokens fact1-ast] (-fact tokens)
-                                 operator (if (-match fact1-tokens "op")
-                                              (first fact1-tokens)
-                                              false)
-                                 [fact2-tokens fact2-ast] (-expr (rest fact1-tokens))]
-                                [fact2-tokens (TreeNode. operator fact1-ast fact2-ast)])
+    (find-first-grammar-rule [
+                              ; expr --> fact {*,/} expr
+                              (if-let* [[fact1-tokens fact1-ast] (-fact tokens)
+                                        operator (if (-match fact1-tokens "op-mult")
+                                                     (first fact1-tokens)
+                                                     false)
+                                        [fact2-tokens fact2-ast] (-expr (rest fact1-tokens))]
+                                       [fact2-tokens (TreeNode. operator fact1-ast fact2-ast)])
 
-                      ; expr --> fact
-                      (if-let* [[fact-tokens fact-ast] (-fact tokens)]
-                                [fact-tokens fact-ast])]))
+                              ; expr --> fact
+                              (if-let* [[fact-tokens fact-ast] (-fact tokens)]
+                                       [fact-tokens fact-ast])]))
 
 (defn -start
-    "Applies one of the grammar rules concerning operators + and -:
+    "Apply one of the grammar rules concerning operators + and -:
     start --> expr + start | expr - start | expr."
     [tokens]
-    (find-first-rule [
-                      ; start --> expr {+,-} start
-                      (if-let* [[expr1-tokens expr1-ast] (-expr tokens)
-                                 operator (if (-match expr1-tokens "op")
-                                              (first expr1-tokens)
-                                              false)
-                                 [expr2-tokens expr2-ast] (-start (rest expr1-tokens))]
-                                [expr2-tokens (TreeNode. operator expr1-ast expr2-ast)])
+    (find-first-grammar-rule [
+                              ; start --> expr {+,-} start
+                              (if-let* [[expr1-tokens expr1-ast] (-expr tokens)
+                                        operator (if (-match expr1-tokens "op-add")
+                                                     (first expr1-tokens)
+                                                     false)
+                                        [expr2-tokens expr2-ast] (-start (rest expr1-tokens))]
+                                       [expr2-tokens (TreeNode. operator expr1-ast expr2-ast)])
 
-                      ; start --> expr
-                      (if-let* [[expr-tokens expr-ast] (-expr tokens)]
-                                [expr-tokens expr-ast])]))
+                              ; start --> expr
+                              (if-let* [[expr-tokens expr-ast] (-expr tokens)]
+                                       [expr-tokens expr-ast])]))
+
+(defn -combine-tree
+    "Go through the tree, and form textual Clojure function."
+    [ast]
+    (cond
+          ; Leaf reached. Constant values are evaluated as they are.
+          ; Variables are converted to symbols, e.g. "+" --> +.
+          (= (:type (:value ast)) "val") (:value (:value ast))
+          (= (:type (:value ast)) "var") (symbol (:value (:value ast)))
+
+          ; Node is not a leaf. Create s-expression (op l-val r-val).
+          :else (let [op (symbol (:value (:value ast)))
+                      left-operand  (-combine-tree (:left-node ast))
+                      right-operand (-combine-tree (:right-node ast))]
+                    (list (symbol op) left-operand right-operand))))
 
 (defn parse
-    "Given tokens from lexical analysis, returns the abstract syntax tree (AST)."
+    "Given tokens from lexical analysis, return the abstract syntax tree (AST)."
     [tokens]
     (let [result (-start tokens)]
         (if result
@@ -95,3 +110,8 @@
                 (throw (Exception. "ERR: Syntax error: All tokens were not used!")))
             ; Using given grammar rules, no valid solution could be found.
             (throw (Exception. "ERR: Syntax error.")))))
+
+(defn create-fn
+    "Given the AST, form Clojure function."
+    [ast]
+    (eval (list 'fn '[x] (-combine-tree ast))))

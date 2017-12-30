@@ -1,22 +1,25 @@
 (ns integrator.parser.lex)
 
-(def operators     #{\+ \- \* \/})
+(def add-operators     #{\+ \-})
+(def mult-operators    #{\* \/})
 (def left-bracket  \()
 (def right-bracket \))
 (def variable      \x)
 
 (defn token [type value] {:type type :value value})
 
-(defn left-bracket-token []   (token "l-par" "("))
-(defn right-bracket-token []  (token "r-par" ")"))
-(defn operator-token [val]    (token "op" val))
-(defn variable-token [val]    (token "var" val))
-(defn number-token [val]      (token "val" val))
+(defn left-bracket-token []         (token "l-par" "("))
+(defn right-bracket-token []        (token "r-par" ")"))
+(defn add-operator-token [val]      (token "op-add" val))
+(defn mult-operator-token [val]     (token "op-mult" val))
+(defn variable-token [val]          (token "var" val))
+(defn number-token [val]            (token "val" val))
 
 (defn is-whitespace? [c]    (clojure.string/blank? (str c)))
 (defn is-left-bracket? [c]  (= left-bracket c))
 (defn is-right-bracket? [c] (= right-bracket c))
-(defn is-operator? [c]      (contains? operators c))
+(defn is-add-operator? [c]  (contains? add-operators c))
+(defn is-mult-operator? [c] (contains? mult-operators c))
 (defn is-variable? [c]      (= variable c))
 (defn is-number? [c]        (Character/isDigit c))
 
@@ -36,7 +39,8 @@
               (is-right-bracket? c) (-scan (rest input-str) "" (conj tokens (right-bracket-token)))
 
               ; Detect operators.
-              (is-operator? c)      (-scan (rest input-str) "" (conj tokens (operator-token peek)))
+              (is-add-operator? c)      (-scan (rest input-str) "" (conj tokens (add-operator-token peek)))
+              (is-mult-operator? c)     (-scan (rest input-str) "" (conj tokens (mult-operator-token peek)))
 
               ; Detect variable 'x'.
               (is-variable? c)      (-scan (rest input-str) "" (conj tokens (variable-token peek)))
