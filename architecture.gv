@@ -1,0 +1,11 @@
+digraph integrator {
+    parser [shape=box];
+    util [style=dashed];    
+    core -> parser [label="1."];
+    parser -> lex [label="1a."];
+    parser -> parse [label="1b."];
+    parse -> util [style=dashed];
+    core -> integrate [label="2."];
+    integrate -> util [style=dashed];
+    core -> report [label="3."];
+}
