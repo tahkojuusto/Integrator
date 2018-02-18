@@ -38,7 +38,7 @@ The main function passes the parsed function and configuration information to ``
 The CLI command has the form of ``lein run <function> <x0> <y0> <x1> <y1> <N>``. For example,
 
 ```sh
-$ lein run "x*y" 0 0 1 1 500
+$ lein run "x^(-2*x)*sin(y + exp(y))" 0.1 0.1 1 1 100
 ```
 
 ```clojure
