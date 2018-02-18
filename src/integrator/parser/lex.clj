@@ -4,6 +4,7 @@
 
 (def add-operators      #{\+ \-})
 (def mult-operators     #{\* \/})
+(def pow-operators      #{\^})
 (def math-functions     #{"exp" "ln" "sqrt" "sin" "cos" "tan"})
 (def left-bracket       \()
 (def right-bracket      \))
@@ -15,15 +16,18 @@
 (defn right-bracket-token []        (token "r-par" ")"))
 (defn add-operator-token [val]      (token "op-add" val))
 (defn mult-operator-token [val]     (token "op-mult" val))
+(defn pow-operator-token [val]      (token "op-pow" val))
 (defn math-function-token [val]     (token "math-fn" val))
 (defn variable-token [val]          (token "var" val))
 (defn number-token [val]            (token "val" val))
+;(defn neg-token []                  (token "neg" "-"))
 
 (defn is-whitespace? [c]        (clojure.string/blank? (str c)))
 (defn is-left-bracket? [c]      (= left-bracket c))
 (defn is-right-bracket? [c]     (= right-bracket c))
 (defn is-add-operator? [c]      (contains? add-operators c))
 (defn is-mult-operator? [c]     (contains? mult-operators c))
+(defn is-pow-operator? [c]      (contains? pow-operators c))
 (defn is-math-function? [input-str]  (some #(str/starts-with? input-str %) math-functions))
 (defn is-variable? [c]          (contains? variables c))
 (defn is-number? [c]            (Character/isDigit c))
@@ -56,6 +60,7 @@
               ; Detect operators.
               (is-add-operator? c)      (-scan (rest input-str) "" (conj tokens (add-operator-token peek)))
               (is-mult-operator? c)     (-scan (rest input-str) "" (conj tokens (mult-operator-token peek)))
+              (is-pow-operator? c)      (-scan (rest input-str) "" (conj tokens (pow-operator-token peek)))
 
               ; Detect math functions.
               (is-math-function? input-str)     (-lex-math-function input-str tokens)

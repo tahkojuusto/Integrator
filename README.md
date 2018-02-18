@@ -41,10 +41,31 @@ The CLI command has the form of ``lein run <function> <x0> <y0> <x1> <y1> <N>``.
 $ lein run "x*y" 0 0 1 1 500
 ```
 
+```clojure
+(* (Math/pow x (* -2 x)) (Math/sin (+ y (Math/exp y))))
+```
+
 ```json
-=> {"configuration":{"sample-size":500, "x0":0, "y0":0, "x1":1, "y1":1},
+{
+    "configuration":
+        {
+            "sample-size": 100,
+            "x0": 0.1,
+            "y0": 0.1,
+            "x1": 1.0,
+            "y1": 1.0
+        },
     "methods":
-        [{"method-name":"midpoint", "result":0.252002},
-         {"method-name":"trapezoid", "result":0.252003004},
-         {"method-name":"simpson", "result":0.250666}]}
+        [
+            {
+                "method-name": "midpoint", "result":  0.76832
+            },
+            {
+                "method-name": "trapezoid", "result": 0.76824
+            },
+            {
+                "method-name": "simpson", "result": 0.7770
+            }
+        ]
+}
 ```

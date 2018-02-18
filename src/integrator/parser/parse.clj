@@ -13,8 +13,8 @@
 ;
 ; start --> expr + start (1) | expr - start (2) | expr (3)
 ; expr  --> func * expr  (4) | func / expr  (5) | func (6)
-; func  --> MATH-FN(start)   | fact
-; fact  --> (start)      (7) | INTEGER       (8)
+; func  --> FUNC(start)  (7) | fact ^ fact  (8) | fact (9)
+; fact  --> (start)      (10)| INTEGER      (11)| - INTEGER (12)
 ;
 
 
@@ -47,6 +47,12 @@
                               (if-let* [integer-tokens (or (-match tokens "val") (-match tokens "var"))]
                                        [integer-tokens (TreeNode. (first tokens) nil nil)])
 
+                              ; fact --> - INTEGER
+                              (if-let* [negative-token (-match tokens "op-add")
+                                        integer-tokens (or (-match negative-token "val") (-match negative-token "var"))
+                                        complement     (- (:value (second tokens)))]
+                                       [integer-tokens (TreeNode. (assoc (second tokens) :value complement) nil nil)])
+
                               ; fact --> (start)
                               (if-let* [left-par-tokens (-match tokens "l-par")
                                         [start-tokens start-ast] (-start left-par-tokens)
@@ -65,6 +71,14 @@
                                         [start-tokens start-ast] (-start left-par-tokens)
                                         right-par-tokens (-match start-tokens "r-par")]
                                         [right-par-tokens (TreeNode. (first tokens) start-ast nil)])
+
+                              ; func --> fact ^ fact
+                              (if-let* [[fact1-tokens fact1-ast] (-fact tokens)
+                                        operator (if (-match fact1-tokens "op-pow")
+                                                     (first fact1-tokens)
+                                                     false)
+                                        [fact2-tokens fact2-ast] (-fact (rest fact1-tokens))]
+                                       [fact2-tokens (TreeNode. operator fact1-ast fact2-ast)])
 
                               ; func --> fact
                               (if-let* [[fact-tokens fact-ast] (-fact tokens)]
@@ -127,6 +141,10 @@
                                              (list 'Math/sin operand))
           (= (:value (:value ast)) "cos") (let [operand (-combine-tree (:left-node ast))]
                                               (list 'Math/cos operand))
+
+          (= (:type (:value ast)) "op-pow") (let [left-operand (-combine-tree (:left-node ast))
+                                                  right-operand (-combine-tree (:right-node ast))]
+                                              (list 'Math/pow left-operand right-operand))
 
           ; Node is not a leaf. Create s-expression (op l-val r-val).
           :else (let [op (symbol (:value (:value ast)))
