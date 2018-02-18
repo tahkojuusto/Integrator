@@ -4,7 +4,7 @@
 
 (def add-operators      #{\+ \-})
 (def mult-operators     #{\* \/})
-(def math-functions     #{"exp" "ln" "sqrt"})
+(def math-functions     #{"exp" "ln" "sqrt" "sin" "cos" "tan"})
 (def left-bracket       \()
 (def right-bracket      \))
 (def variables          #{\x \y})
@@ -24,7 +24,7 @@
 (defn is-right-bracket? [c]     (= right-bracket c))
 (defn is-add-operator? [c]      (contains? add-operators c))
 (defn is-mult-operator? [c]     (contains? mult-operators c))
-(defn is-math-function? [func]  (contains? math-functions func))
+(defn is-math-function? [input-str]  (some #(str/starts-with? input-str %) math-functions))
 (defn is-variable? [c]          (contains? variables c))
 (defn is-number? [c]            (Character/isDigit c))
 
@@ -58,7 +58,7 @@
               (is-mult-operator? c)     (-scan (rest input-str) "" (conj tokens (mult-operator-token peek)))
 
               ; Detect math functions.
-              (some #(str/starts-with? input-str %) math-functions)     (-lex-math-function input-str tokens)
+              (is-math-function? input-str)     (-lex-math-function input-str tokens)
 
               ; Detect variable 'x'.
               (is-variable? c)      (-scan (rest input-str) "" (conj tokens (variable-token peek)))

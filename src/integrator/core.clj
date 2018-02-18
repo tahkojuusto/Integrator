@@ -41,10 +41,10 @@
           y1-str    (nth args 4)
           N-str     (nth args 5)
           f         (-parse-fn f-str)
-          x0        (Long/parseLong x0-str)
-          y0        (Long/parseLong y0-str)
-          x1        (Long/parseLong x1-str)
-          y1        (Long/parseLong y1-str)
+          x0        (Double/parseDouble x0-str)
+          y0        (Double/parseDouble y0-str)
+          x1        (Double/parseDouble x1-str)
+          y1        (Double/parseDouble y1-str)
           N         (Long/parseLong N-str)]
         [f x0 y0 x1 y1 N]))
 

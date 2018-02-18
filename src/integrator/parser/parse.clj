@@ -123,6 +123,10 @@
                                                (list 'Math/sqrt operand))
           (= (:value (:value ast)) "ln") (let [operand (-combine-tree (:left-node ast))]
                                              (list 'Math/log operand))
+          (= (:value (:value ast)) "sin") (let [operand (-combine-tree (:left-node ast))]
+                                             (list 'Math/sin operand))
+          (= (:value (:value ast)) "cos") (let [operand (-combine-tree (:left-node ast))]
+                                              (list 'Math/cos operand))
 
           ; Node is not a leaf. Create s-expression (op l-val r-val).
           :else (let [op (symbol (:value (:value ast)))
