@@ -17,8 +17,9 @@ Integrator has layered architecture, i.e. a high-level layer or module refers to
 
 ```
 start --> expr + start (1) | expr - start (2) | expr (3)
-expr  --> fact * expr  (4) | fact / expr  (5) | fact (6)
-fact  --> (start)      (7) | INTEGER       (8)
+expr  --> func * expr  (4) | func / expr  (5) | func (6)
+func  --> FUNC(start)  (7) | fact ^ fact  (8) | fact (9)
+fact  --> (start)      (10)| DOUBLE      (11) | - DOUBLE (12)
 ```
 
 where lowercase keywords are non-terminals and uppercase keywords terminals. While the grammar is ``LL(1)``, the parser utilizes the backtracking algorithm. Lexical analyzer creates tokens needed by the parser, and removes redundant symbols such as whitespaces.
@@ -68,4 +69,18 @@ $ lein run "x^(-2*x)*sin(y + exp(y))" 0.1 0.1 1 1 100
             }
         ]
 }
+```
+
+## Supported functionality
+
+### Operators
+
+```
++ - / * ^
+```
+
+### Math functions
+
+```
+sqrt exp ln sin cos
 ```

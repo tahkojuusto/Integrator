@@ -14,7 +14,7 @@
 ; start --> expr + start (1) | expr - start (2) | expr (3)
 ; expr  --> func * expr  (4) | func / expr  (5) | func (6)
 ; func  --> FUNC(start)  (7) | fact ^ fact  (8) | fact (9)
-; fact  --> (start)      (10)| INTEGER      (11)| - INTEGER (12)
+; fact  --> (start)      (10)| DOUBLE      (11) | - DOUBLE (12)
 ;
 
 
