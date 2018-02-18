@@ -12,7 +12,8 @@
 ; Context-free LL(1) grammar rules:
 ;
 ; start --> expr + start (1) | expr - start (2) | expr (3)
-; expr  --> fact * expr  (4) | fact / expr  (5) | fact (6)
+; expr  --> func * expr  (4) | func / expr  (5) | func (6)
+; func  --> MATH-FN(start)   | fact
 ; fact  --> (start)      (7) | INTEGER       (8)
 ;
 
@@ -52,6 +53,23 @@
                                         right-par-tokens (-match start-tokens "r-par")]
                                        [right-par-tokens start-ast])]))
 
+(defn -func
+    "Apply one of the grammar rules concerning math functions, e.g. exp():
+    func --> MATH-FN(start) | fact"
+    [tokens]
+    (log/trace "ENTERING parse/-func.")
+    (find-first-grammar-rule [
+                              ; func --> MATH-FN(start)
+                              (if-let* [math-fn-token (-match tokens "math-fn")
+                                        left-par-tokens (-match math-fn-token "l-par")
+                                        [start-tokens start-ast] (-start left-par-tokens)
+                                        right-par-tokens (-match start-tokens "r-par")]
+                                        [right-par-tokens (TreeNode. (first tokens) start-ast nil)])
+
+                              ; func --> fact
+                              (if-let* [[fact-tokens fact-ast] (-fact tokens)]
+                                       [fact-tokens fact-ast])]))
+
 (defn -expr
     "Apply one of the grammar rules concerning operators * and /:
     expr --> fact * expr | fact / expr | fact."
@@ -59,7 +77,7 @@
     (log/trace "ENTERING parse/-expr.")
     (find-first-grammar-rule [
                               ; expr --> fact {*,/} expr
-                              (if-let* [[fact1-tokens fact1-ast] (-fact tokens)
+                              (if-let* [[fact1-tokens fact1-ast] (-func tokens)
                                         operator (if (-match fact1-tokens "op-mult")
                                                      (first fact1-tokens)
                                                      false)
@@ -67,7 +85,7 @@
                                        [fact2-tokens (TreeNode. operator fact1-ast fact2-ast)])
 
                               ; expr --> fact
-                              (if-let* [[fact-tokens fact-ast] (-fact tokens)]
+                              (if-let* [[fact-tokens fact-ast] (-func tokens)]
                                        [fact-tokens fact-ast])]))
 
 (defn -start
@@ -98,6 +116,14 @@
           (= (:type (:value ast)) "val") (:value (:value ast))
           (= (:type (:value ast)) "var") (symbol (:value (:value ast)))
 
+          ; Node is not leaf. Check if math function.
+          (= (:value (:value ast)) "exp") (let [operand (-combine-tree (:left-node ast))]
+                                              (list 'Math/exp operand))
+          (= (:value (:value ast)) "sqrt") (let [operand (-combine-tree (:left-node ast))]
+                                               (list 'Math/sqrt operand))
+          (= (:value (:value ast)) "ln") (let [operand (-combine-tree (:left-node ast))]
+                                             (list 'Math/log operand))
+
           ; Node is not a leaf. Create s-expression (op l-val r-val).
           :else (let [op (symbol (:value (:value ast)))
                       left-operand  (-combine-tree (:left-node ast))
@@ -122,4 +148,4 @@
     "Given the AST, form Clojure function."
     [ast]
     (log/trace "ENTERING parse/-create-fn.")
-    (eval (list 'fn '[x y] (-combine-tree ast))))
+    (eval (list 'fn '[x y] (do (println (-combine-tree ast)) (-combine-tree ast)))))
