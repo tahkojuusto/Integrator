@@ -8,17 +8,17 @@
 
 (defn -run
     "Calculate the integration for each method, and create corresponding reports."
-    [f x0 x1 N]
+    [f x0 y0 x1 y1 N]
     (log/trace "ENTERING core/-run.")
     ; Run separately using different methods.
-    (let [trapezoid-result  (integrate/integrate f x0 x1 "trapezoid" N)
-          midpoint-result   (integrate/integrate f x0 x1 "midpoint" N)
-          simpson-result    (integrate/integrate f x0 x1 "simpson" N)
+    (let [trapezoid-result  (integrate/integrate f x0 y0 x1 y1 "trapezoid" N)
+          midpoint-result   (integrate/integrate f x0 y0 x1 y1 "midpoint" N)
+          simpson-result    (integrate/integrate f x0 y0 x1 y1 "simpson" N)
           trapezoid-report  (report/create-JSON-method-struct "trapezoid" trapezoid-result)
           midpoint-report   (report/create-JSON-method-struct "midpoint" midpoint-result)
           simpson-report    (report/create-JSON-method-struct "simpson" simpson-result)
-          config            (report/create-JSON-config-struct x0 x1 N)]
-        (report/create-report [trapezoid-report midpoint-report simpson-report] config)))
+          config            (report/create-JSON-config-struct x0 y0 x1 y1 N)]
+        (report/create-report [midpoint-report trapezoid-report simpson-report] config)))
 
 
 (defn -parse-fn
@@ -36,21 +36,25 @@
     (log/trace "ENTERING core/-parse-args.")
     (let [f-str     (nth args 0)
           x0-str    (nth args 1)
-          x1-str    (nth args 2)
-          N-str     (nth args 3)
+          y0-str    (nth args 2)
+          x1-str    (nth args 3)
+          y1-str    (nth args 4)
+          N-str     (nth args 5)
           f         (-parse-fn f-str)
           x0        (Long/parseLong x0-str)
+          y0        (Long/parseLong y0-str)
           x1        (Long/parseLong x1-str)
+          y1        (Long/parseLong y1-str)
           N         (Long/parseLong N-str)]
-        [f x0 x1 N]))
+        [f x0 y0 x1 y1 N]))
 
 (defn -main
     "Integrate f(x) from x0 to x1 with N steps. Use multiple numerical methods.
     From results, create a JSON report."
     [& args]
     (log/trace "ENTERING core/-main.")
-    (if (not (= (count args) 4))
+    (if (not (= (count args) 6))
         (println "Usage: lein run <f> <x0> <x1> <N>")
-            (let [[f x0 x1 N] (-parse-args args)
-                  result (-run f x0 x1 N)]
+            (let [[f x0 y0 x1 y1 N] (-parse-args args)
+                  result (-run f x0 y0 x1 y1 N)]
                 result)))

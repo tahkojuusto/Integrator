@@ -122,4 +122,4 @@
     "Given the AST, form Clojure function."
     [ast]
     (log/trace "ENTERING parse/-create-fn.")
-    (eval (list 'fn '[x] (-combine-tree ast))))
+    (eval (list 'fn '[x y] (-combine-tree ast))))

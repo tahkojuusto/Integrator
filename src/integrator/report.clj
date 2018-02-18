@@ -19,10 +19,12 @@
 (defn create-JSON-config-struct
     "Create a JSON structure representing the configuration
     settings."
-    [x0 x1 N]
+    [x0 y0 x1 y1 N]
     (log/trace "ENTERING report/create-JSON-config-struct.")
     {:x0          x0
+     :y0          y0
      :x1          x1
+     :y1          y1
      :sample-size N})
 
 (defn create-JSON-report
@@ -32,7 +34,9 @@
     (log/trace "ENTERING report/create-JSON-report.")
     {:configuration {:sample-size (:sample-size config)
                      :x0          (:x0 config)
-                     :x1          (:x1 config)}
+                     :y0          (:y0 config)
+                     :x1          (:x1 config)
+                     :y1          (:y1 config)}
      :methods methods})
 
 (defn create-report

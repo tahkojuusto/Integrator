@@ -1,11 +1,11 @@
 (ns integrator.parser.lex
     (:require [clojure.tools.logging :as log]))
 
-(def add-operators     #{\+ \-})
-(def mult-operators    #{\* \/})
-(def left-bracket  \()
-(def right-bracket \))
-(def variable      \x)
+(def add-operators      #{\+ \-})
+(def mult-operators     #{\* \/})
+(def left-bracket       \()
+(def right-bracket      \))
+(def variables          #{\x \y})
 
 (defn token [type value] {:type type :value value})
 
@@ -21,7 +21,7 @@
 (defn is-right-bracket? [c] (= right-bracket c))
 (defn is-add-operator? [c]  (contains? add-operators c))
 (defn is-mult-operator? [c] (contains? mult-operators c))
-(defn is-variable? [c]      (= variable c))
+(defn is-variable? [c]      (contains? variables c))
 (defn is-number? [c]        (Character/isDigit c))
 
 (defn -scan
