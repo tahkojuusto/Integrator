@@ -26,7 +26,7 @@
 (defrecord TreeNode [value left-node right-node])
 
 (defn -match
-    "Take the first token, verify it is a non-terminal
+    "Take the first token, verify it is a terminal
     and matches the expected token type.
 
     Returns the rest of tokens if there is a match.
@@ -170,4 +170,4 @@
     "Given the AST, form Clojure function."
     [ast]
     (log/trace "ENTERING parse/-create-fn.")
-    (eval (list 'fn '[x y] (do (println (-combine-tree ast)) (-combine-tree ast)))))
+    (eval (list 'fn '[x y] (-combine-tree ast))))

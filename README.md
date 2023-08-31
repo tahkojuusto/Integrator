@@ -1,5 +1,7 @@
 # Integrator
 
+Julius Eerola 2023
+
 ## Overview
 
 This app calculates the two-dimensional integration numerically using three methods:

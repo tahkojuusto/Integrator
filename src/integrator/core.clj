@@ -1,10 +1,9 @@
 (ns integrator.core
-    (:require [integrator.integrate :as integrate])
-    (:require [integrator.report :as report])
-    (:require [integrator.util :as util])
-    (:require [integrator.parser.lex :as lex])
-    (:require [integrator.parser.parse :as parse])
-    (:require [clojure.tools.logging :as log]))
+  (:require [integrator.integrate :as integrate])
+  (:require [integrator.report :as report]) 
+  (:require [integrator.parser.lex :as lex])
+  (:require [integrator.parser.parse :as parse])
+  (:require [clojure.tools.logging :as log]))
 
 (defn -run
     "Calculate the integration for each method, and create corresponding reports."
@@ -54,7 +53,7 @@
     [& args]
     (log/trace "ENTERING core/-main.")
     (if (not (= (count args) 6))
-        (println "Usage: lein run <f> <x0> <x1> <N>")
+        (println "Usage: lein run <f> <x0> <y0> <x1> <y1> <N>")
             (let [[f x0 y0 x1 y1 N] (-parse-args args)
                   result (-run f x0 y0 x1 y1 N)]
                 result)))
