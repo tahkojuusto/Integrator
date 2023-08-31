@@ -32,13 +32,14 @@ The main function passes the parsed function and configuration information to ``
 
 ## Installation
 
-1. Install Clojure: ``brew install clojure``
-2. Clone the repository: ``git clone git@github.com:tahkojuusto/Integrator.git``
-3. Install dependencies in the project root folder: ``lein deps``
+1. Install Clojure: `brew install clojure`
+2. Install Leiningen `brew install leiningen`
+3. Clone the repository: `git clone git@github.com:tahkojuusto/Integrator.git`
+4. Install dependencies in the project root folder: `lein deps`
 
 ## Usage
 
-The CLI command has the form of ``lein run <function> <x0> <y0> <x1> <y1> <N>``. For example,
+The CLI command has the form of `lein run <function> <x0> <y0> <x1> <y1> <N>`. For example,
 
 ```sh
 $ lein run "x^(-2*x)*sin(y + exp(y))" 0.1 0.1 1 1 100
